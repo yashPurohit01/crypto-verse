@@ -1,0 +1,42 @@
+.control {
+    width: rem(300px);
+    font-size: larger;
+    padding: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: var(--mantine-radius-md);
+    /* border: rem(1px) solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6)); */
+    transition: background-color 150ms ease;
+    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  
+    /* &[data-expanded] {
+      background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
+    } */
+  
+    @mixin hover {
+      background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
+    }
+  }
+  
+  .label {
+    font-weight: 100;
+    font-size: 28px;
+    /* font-size:   var(--mantine-font-size-3xl); */
+  }
+
+  .price{
+    font-size: 48px;
+    font-weight: 100;
+    margin-top: 0;
+    padding-bottom: 0;
+  }
+  
+  .icon {
+    transition: transform 150ms ease;
+    transform: rotate(0deg);
+
+    [data-expanded] & {
+      transform: rotate(180deg);
+    }
+  }

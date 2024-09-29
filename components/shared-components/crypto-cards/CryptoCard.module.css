@@ -1,0 +1,21 @@
+.card {
+    position: relative;
+    overflow: visible;
+    width: 300px;
+    padding: var(--mantine-spacing-xl);
+    padding-top: calc(var(--mantine-spacing-xl) * 1 + rem(20px));
+  }
+  
+  .icon {
+    position: absolute;
+    top: rem(-80px);
+    left: calc(50% - rem(30px));
+  }
+  
+  .title {
+
+    font-family:
+      Greycliff CF,
+      var(--mantine-font-family);
+    line-height: 1;
+  }

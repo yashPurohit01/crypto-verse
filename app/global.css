@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.display-flex{
+  display: flex;
+  flex-direction:row;
+  align-items: center;
+  justify-content: center; 
+  
+
+}
