@@ -1,4 +1,4 @@
-import Analysis from '@/components/analysis/Analysis'
+import Analysis from '@/components/analysisReport/Analysis'
 import React from 'react'
 
 function AnalysisMain() {
