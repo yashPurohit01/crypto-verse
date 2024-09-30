@@ -11,6 +11,7 @@ import { CryptoCard } from '../shared-components/crypto-cards/CryptoCard';
 function Cryptos() {
   const { coins } = useSelector((state: RootState) => state.coins);
   const [randomCoins, setRandomCoins] = useState<any[]>([]);
+  const { globalCurrency , currencySymbol} = useSelector((state: RootState) => state.currency);
 
   useEffect(() => {
     if (coins.length > 0) {
@@ -29,9 +30,10 @@ function Cryptos() {
           key={coin?.item.id}
           id={coin?.item.id}
           name={coin?.item.name}
+          currenySymbol={currencySymbol}
           symbol={coin?.item.symbol}
           price={coin?.item.data?.price}
-          priceChangePercentage={coin?.item.data?.price_change_percentage_24h['usd'] || 0}
+          priceChangePercentage={coin?.item.data?.price_change_percentage_24h[globalCurrency] || 0}
           marketCap={coin?.item.data?.market_cap}
           marketCapBtc={coin?.item.data?.market_cap_btc}
           totalVolume= {coin?.item.data?.total_volume}

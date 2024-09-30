@@ -4,7 +4,7 @@ import { UnstyledButton, Menu, Image, Group, Title, Text, Flex, Box, Button } fr
 import { IconChartBar, IconChartLine, IconChevronDown } from '@tabler/icons-react';
 import classes from './CryptoOptions.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCoinDetails, fetchCoins, fetchGraphData } from '@/Redux/thunks/CryptoThunks';
+import { fetchCoinDetails, fetchCoins} from '@/Redux/thunks/CryptoThunks';
 import { AppDispatch, RootState } from '@/Redux/store';
 import { CoinDetail } from '@/Redux/interface';
 import { selectCoin } from '@/Redux/slice/CryptoCoinsSlice';
@@ -19,6 +19,7 @@ export function CryptoOptions({setGraphSelection}:IProps) {
   const [dateOpened, setDateOpened] = useState(false);
   const [selectedDate, setSelectedDate] = useState("1 Day"); // Default selection for date
   const [selected, setSelected] = useState<CoinDetail | null>(null);
+ 
 
   const dispatch: AppDispatch = useDispatch();
 
@@ -44,7 +45,7 @@ export function CryptoOptions({setGraphSelection}:IProps) {
         "1 Year": "365",
       };
       const days = daysMap[selectedDate] || "365"; // Default to 365 if the selectedDate is not found
-      dispatch(fetchGraphData({ coinId: selected.item.id, days, currency: globalCurrency }));
+      // dispatch(fetchGraphData({ coinId: selected.item.id, days, currency: globalCurrency }));
     }
   }, [dispatch, selected, globalCurrency, selectedDate]); // Add selectedDate to dependencies
 
@@ -86,7 +87,7 @@ export function CryptoOptions({setGraphSelection}:IProps) {
     </Menu.Item>
   )), []);
 
-  const percentageChange = selected?.item?.data?.price_change_percentage_24h?.usd ?? 0;
+  const percentageChange = selected?.item?.data?.price_change_percentage_24h[globalCurrency]?? 0;
   const color = percentageChange >= 0 ? 'green' : 'red';
 
   return (

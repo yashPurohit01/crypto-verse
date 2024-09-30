@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CoinState } from "../interface";
-import { fetchCoins, fetchCoinDetails, fetchGraphData, fetchCoinsList } from "../thunks/CryptoThunks";
+import { fetchCoins, fetchCoinDetails, fetchCoinsList } from "../thunks/CryptoThunks";
 
 // Initial state
 const initialState: CoinState = {
@@ -63,21 +63,6 @@ const CryptoCoinsSlice = createSlice({
       .addCase(fetchCoinDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch coin details';
-      });
-
-    // Fetching graph data
-    builder
-      .addCase(fetchGraphData.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchGraphData.fulfilled, (state, action) => {
-        state.loading = false;
-        state.graphData = action.payload;
-      })
-      .addCase(fetchGraphData.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || 'Failed to fetch graph data';
       });
       
       builder

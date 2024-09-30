@@ -12,6 +12,8 @@ import BasicCryptoCards from '../shared-components/crypto-cards/BasicCryptoCards
 function FloatingCryptos() {
   const { coins } = useSelector((state: RootState) => state.coins);
   const [randomCoins, setRandomCoins] = useState<any[]>([]);
+  const { globalCurrency , currencySymbol} = useSelector((state: RootState) => state.currency);
+
 
   useEffect(() => {
     if (coins.length > 0) {
@@ -30,6 +32,7 @@ function FloatingCryptos() {
           name={coin?.item.name}
           price={coin?.item.data?.price}
           image={coin?.item.large}
+          currency={currencySymbol}
         />
       ))}
     </Flex>

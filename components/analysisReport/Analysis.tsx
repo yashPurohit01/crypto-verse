@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 function Analysis() {
     const { coinDetails } = useSelector((state: RootState) => state.coins);
 
+    const { globalCurrency} = useSelector((state: RootState) => state.currency);
+
     function formatValueWithColor(value: string): JSX.Element {
         const numericValue = parseFloat(value); // Convert string to number
         if (isNaN(numericValue)) {
@@ -108,7 +110,7 @@ function Analysis() {
                         fontWeight: 'lighter',
                         color: 'white'
                     }}>
-                        {formatValueWithColor(coinDetails?.market_data.ath_change_percentage?.usd)}
+                        {formatValueWithColor(coinDetails?.market_data.ath_change_percentage[globalCurrency])}
                     </Text>
                     <Flex gap={'lg'} justify={'space-between'} align={'flex-end'}>
                         <Text style={{
@@ -134,7 +136,7 @@ function Analysis() {
                         fontWeight: 'lighter',
                         color: 'white'
                     }}>
-                        ${formatNumberWithCommas(coinDetails?.market_data.current_price?.usd)}
+                        ${formatNumberWithCommas(coinDetails?.market_data.current_price[globalCurrency])}
                     </Text>
                     <Flex gap={'lg'} justify={'space-between'} align={'flex-end'}>
                         <Text style={{
@@ -162,7 +164,7 @@ function Analysis() {
                         fontWeight: 'lighter',
                         color: 'white'
                     }}>
-                        {formatNumberWithCommas(coinDetails?.market_data.total_volume?.usd)}
+                        {formatNumberWithCommas(coinDetails?.market_data.total_volume[globalCurrency])}
                     </Text>
                     <Flex gap={'lg'} justify={'space-between'} align={'flex-end'}>
                         <Text style={{

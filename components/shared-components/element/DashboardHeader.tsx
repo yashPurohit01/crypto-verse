@@ -9,6 +9,7 @@ import { CoinDetail } from '@/Redux/interface';
 import { useParams } from 'next/navigation';
 import { fetchMarketChartGraphData, fetchOHLCGraphData } from '@/Redux/thunks/GraphThunks';
 import { fetchCoins } from '@/Redux/thunks/CryptoThunks';
+import { formatNumberWithCommas } from '@/utils/conversions';
 
 interface IProps {
     setGraphSelection: (graph: string) => void;
@@ -22,7 +23,7 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
     const params = useParams<{ coinID: string }>();
     const { coinID } = params;
     const { coinDetails, loading } = useSelector((state: RootState) => state.coins);
-    const globalCurrency = useSelector((state: RootState) => state.currency.globalCurrency);
+    const {globalCurrency,currencySymbol} = useSelector((state: RootState) => state.currency);
 
     // Fetch coins when the component mounts
     useEffect(() => {
@@ -63,7 +64,7 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
         </Menu.Item>
     )), []);
 
-    const percentageChange = parseFloat(coinDetails?.market_data?.price_change_percentage_24h_in_currency?.usd) ?? 0;
+    const percentageChange = parseFloat(coinDetails?.market_data?.price_change_percentage_24h_in_currency[globalCurrency]) ?? 0;
     const color = percentageChange >= 0 ? 'green' : 'red';
 
     const buttonStyles = useMemo(() => ({
@@ -110,7 +111,7 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
                     <Box>
                         <Flex align="flex-end">
                             <Title style={{ fontSize: '48px', fontWeight: 'lighter', marginLeft: '4px' }} className={classes.price}>
-                                {parseFloat(coinDetails?.market_data?.current_price?.usd).toFixed(6)}
+                             {currencySymbol}   {formatNumberWithCommas(parseFloat(coinDetails?.market_data?.current_price[globalCurrency]).toFixed(3))}
                             </Title>
                             <Text style={{ color, marginBottom: '8px', marginLeft: '4px', fontSize: '10px' }}>
                                 ({Math.abs(percentageChange).toFixed(2)})%

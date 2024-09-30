@@ -6,6 +6,7 @@ interface CryptoCardProps {
   id: string; // Coin ID
   name: string;
   symbol: string;
+  currenySymbol:string;
   price: number;
   marketCapBtc: string;
   totalVolume: string;
@@ -15,7 +16,7 @@ interface CryptoCardProps {
   imageUrl: string; // Image URL
 }
 
-export function CryptoCard({ name, symbol, price, priceChangePercentage, marketCap, imageUrl, totalVolume, totalVolumeBtc, marketCapBtc }: CryptoCardProps) {
+export function CryptoCard({ name, symbol, price,  currenySymbol,priceChangePercentage, marketCap, imageUrl, totalVolume, totalVolumeBtc, marketCapBtc }: CryptoCardProps) {
   return (
     <Paper radius="30px" bg="#1d2129" className={classes.card} mt={20}>
       <ThemeIcon className={classes.icon} size={60} radius={60}>
@@ -25,7 +26,7 @@ export function CryptoCard({ name, symbol, price, priceChangePercentage, marketC
         {name}
       </Text>
       <Text fw={100} ta="center" fz="xl">
-        ${price?.toFixed(2)}
+       {currenySymbol} {price?.toFixed(2)}
       </Text>
 
       <Group gap={2} style={{ padding: '10px', width: '100%' }} >

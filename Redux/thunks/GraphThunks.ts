@@ -2,15 +2,18 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { RootState } from '../store';
 
 // Fetch OHLC data thunk
 export const fetchOHLCGraphData = createAsyncThunk(
   'crypto/fetchOHLCGraphData',
   async (
     { coinId, currency, days }: { coinId: string; currency: string; days: string },
-    { rejectWithValue }
+    { rejectWithValue,getState }
   ) => {
     try {
+      const state = getState() as RootState;
+    const currency = state.currency.globalCurrency; 
       const response = await axios.get(`/api/ohlc`, {
         params: {
           coinId: coinId,
@@ -30,9 +33,11 @@ export const fetchMarketChartGraphData = createAsyncThunk(
   'crypto/fetchMarketChartGraphData',
   async (
     { coinId, currency, days }: { coinId: string; currency: string; days: string },
-    { rejectWithValue }
+    { rejectWithValue,getState }
   ) => {
     try {
+      const state = getState() as RootState;
+      const currency = state.currency.globalCurrency; 
       const response = await axios.get(`/api/market-chart`, {
         params: {
           coinId: coinId,
