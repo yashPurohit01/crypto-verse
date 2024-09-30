@@ -67,6 +67,6 @@ const graphSlice = createSlice({
   },
 });
 
-export const { clearGraphData,setDefaultDateRange } = graphSlice.actions;
+export const { clearGraphData,setDefaultDateRange,setGraphType } = graphSlice.actions;
 
 export default graphSlice.reducer;
