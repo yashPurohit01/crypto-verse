@@ -1,4 +1,4 @@
-"use Client";
+"use client";
 import { useEffect, useState, useMemo } from 'react';
 import { UnstyledButton, Menu, Image, Group, Title, Text, Flex, Box, Button, Skeleton } from '@mantine/core';
 import { IconChartBar, IconChartLine, IconChevronDown } from '@tabler/icons-react';
@@ -11,19 +11,15 @@ import { fetchMarketChartGraphData, fetchOHLCGraphData } from '@/Redux/thunks/Gr
 import { fetchCoins } from '@/Redux/thunks/CryptoThunks';
 
 interface IProps {
-    setGraphSelection: any;
-    selectedGraph: string; // Correctly defines a function that takes no arguments and returns void
+    setGraphSelection: (graph: string) => void;
+    selectedGraph: string; 
 }
 
 export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IProps) {
-    const [opened, setOpened] = useState(false);
     const [dateOpened, setDateOpened] = useState(false);
     const [selectedDate, setSelectedDate] = useState("1 Year"); // Default selection for date
-    const [selected, setSelected] = useState<CoinDetail | null>(null);
-
     const dispatch: AppDispatch = useDispatch();
     const params = useParams<{ coinID: string }>();
-
     const { coinID } = params;
     const { coinDetails, loading } = useSelector((state: RootState) => state.coins);
     const globalCurrency = useSelector((state: RootState) => state.currency.globalCurrency);
@@ -36,7 +32,6 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
     // Fetch graph data when the selected coin, graph type, or global currency changes
     useEffect(() => {
         if (coinID) {
-            // Map the selected date to the corresponding number of days
             const daysMap: Record<string, string> = {
                 "1 Day": "1",
                 "3 Day": "3",
@@ -45,35 +40,40 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
                 "6 Month": "180",
                 "1 Year": "365",
             };
-            const days = daysMap[selectedDate] || "365"; // Default to 365 if the selectedDate is not found
+            const days = daysMap[selectedDate] || "365";
 
-            // Conditionally fetch the appropriate graph data based on selectedGraph
-            if (selectedGraph === "bar") {
-                dispatch(fetchOHLCGraphData({ coinId: coinID, currency: globalCurrency, days }));
-            } else {
-                dispatch(fetchMarketChartGraphData({ coinId: coinID, currency: globalCurrency, days }));
-            }
+            const fetchGraphData = selectedGraph === "bar" 
+                ? fetchOHLCGraphData 
+                : fetchMarketChartGraphData;
+
+            dispatch(fetchGraphData({ coinId: coinID, currency: globalCurrency, days }));
         }
-    }, [dispatch, selected, globalCurrency, selectedDate, selectedGraph, coinID]);
+    }, [dispatch, globalCurrency, selectedDate, selectedGraph, coinID]);
 
-    // Memoize the date options
-    const dateItems = useMemo(() => ["1 Day", "3 Day", "1 Week", "1 Month", "6 Month", "1 Year"].map((label) => (
+    const dateItems = useMemo(() => ["1 Day", "3 Day", "1 Week", "1 Month", "6 Month", "1 Year"].map(label => (
         <Menu.Item
-            style={{
-                fontSize:'12px'
-            }}
+            style={{ fontSize: '12px' }}
             onClick={() => {
                 setSelectedDate(label);
                 setDateOpened(false);
             }}
             key={label}
         >
-          <Text fs={'xs'}> {label}</Text> 
+            <Text fs={'xs'}>{label}</Text>
         </Menu.Item>
     )), []);
 
     const percentageChange = parseFloat(coinDetails?.market_data?.price_change_percentage_24h_in_currency?.usd) ?? 0;
     const color = percentageChange >= 0 ? 'green' : 'red';
+
+    const buttonStyles = useMemo(() => ({
+        padding: 6,
+        backgroundColor: 'transparent',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        },
+    }), []);
 
     return (
         <Box style={{ width: "100%" }}>
@@ -87,50 +87,23 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
                     </Group>
 
                     <Flex gap="md">
-                        <Button
-                            variant="outline"
-                            style={{
-                                padding: 6,
-                                backgroundColor: 'transparent',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                },
-                            }}
-                            onClick={() => setGraphSelection("bar")}
-                        >
-                            <IconChartBar stroke={0.8} opacity={.8} />
+                        <Button variant="outline" style={buttonStyles} onClick={() => setGraphSelection("bar")}>
+                            <IconChartBar stroke={0.8} opacity={0.8} />
                         </Button>
 
-                        <Button
-                            variant="outline"
-                            style={{
-                                padding: 6,
-                                backgroundColor: 'transparent',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                },
-                            }}
-                            onClick={() => setGraphSelection("line")}
-                        >
-                            <IconChartLine stroke={0.8} opacity={.8} />
+                        <Button variant="outline" style={buttonStyles} onClick={() => setGraphSelection("line")}>
+                            <IconChartLine stroke={0.8} opacity={0.8} />
                         </Button>
                     </Flex>
                 </Flex> :
                 <Flex align="flex-end" justify="space-between">
                     <Group>
                         <Skeleton height={50} width="100px" radius="md" />
-                        
                     </Group>
                     <Group>
                         <Skeleton height={60} width="200px" radius="md" />
-                        
                     </Group>
-
-
                 </Flex>
-
             }
             {!loading ?
                 <Flex align="flex-end" justify="space-between">
@@ -139,14 +112,7 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
                             <Title style={{ fontSize: '48px', fontWeight: 'lighter', marginLeft: '4px' }} className={classes.price}>
                                 {parseFloat(coinDetails?.market_data?.current_price?.usd).toFixed(6)}
                             </Title>
-                            <Text
-                                style={{
-                                    color,
-                                    marginBottom: '8px',
-                                    marginLeft: '4px',
-                                    fontSize: '10px',
-                                }}
-                            >
+                            <Text style={{ color, marginBottom: '8px', marginLeft: '4px', fontSize: '10px' }}>
                                 ({Math.abs(percentageChange).toFixed(2)})%
                             </Text>
                         </Flex>
@@ -174,7 +140,7 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
                         </Menu>
                     </Box>
                 </Flex> :
-                 <Skeleton height={100} width="300px" radius="md" mt={10} />
+                <Skeleton height={100} width="300px" radius="md" mt={10} />
             }
         </Box>
     );

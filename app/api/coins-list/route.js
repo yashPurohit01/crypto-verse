@@ -9,9 +9,9 @@ export async function GET() {
         console.log('Token:', TOKEN); // Ensure the token is being logged properly
 
         const response = await axios.get(GET_COIN_LIST, {
-            headers: {
-                "x-cg-demo-api-key": TOKEN || '', // In case TOKEN is undefined, provide a fallback
-            },
+            // headers: {
+            //     "x-cg-demo-api-key": TOKEN || '', // In case TOKEN is undefined, provide a fallback
+            // },
         });
 
         console.log('Axios Response:', response.data); // Log the actual data

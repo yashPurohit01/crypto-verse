@@ -1,9 +1,9 @@
 "use client";
-import { Box, Flex, Skeleton, Button, ActionIcon } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
+import { Box, Flex, Skeleton, ActionIcon } from '@mantine/core';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/Redux/store';
+import { AppDispatch, RootState } from '@/Redux/store';
 import LineCharts from '../charts/LineCharts';
 import CandlestickChart from '../charts/CandelCharts';
 import { fetchCoinDetails } from '@/Redux/thunks/CryptoThunks';
@@ -13,15 +13,14 @@ import { IconArrowsMaximize, IconArrowsMinimize } from '@tabler/icons-react';
 import { navs } from './options';
 
 function DashboardElements({ children }: { children: React.ReactNode }) {
-  const [chartData, setChartData] = useState<any>(null);
-  const { marketChartData,ohlcData, loading } = useSelector((state: RootState) => state.graph);
   const [selectedGraph, setGraphSelection] = useState<string>('bar');
   const [activeLink, setActiveLink] = useState<string>('');
-  const params = useParams<{ coinID: string }>();
-  const dispatch: any = useDispatch();
-  const { coinID } = params;
   const [isFullScreen, setIsFullScreen] = useState(false);
-  
+  const params = useParams<{ coinID: string }>();
+  const dispatch:AppDispatch = useDispatch();
+  const { coinID } = params;
+
+  const { marketChartData, ohlcData, loading } = useSelector((state: RootState) => state.graph);
 
   useEffect(() => {
     if (coinID) {
@@ -29,11 +28,11 @@ function DashboardElements({ children }: { children: React.ReactNode }) {
     }
   }, [coinID, dispatch]);
 
-  const handleLinkClick = (link: string) => {
+  const handleLinkClick = useCallback((link: string) => {
     setActiveLink(link);
-  };
+  }, []);
 
-  const toggleFullScreen = () => {
+  const toggleFullScreen = useCallback(() => {
     const chartContainer = document.getElementById('chart-container');
     if (!chartContainer) return;
 
@@ -42,67 +41,71 @@ function DashboardElements({ children }: { children: React.ReactNode }) {
     } else {
       chartContainer.requestFullscreen();
     }
-    setIsFullScreen(!isFullScreen);
-  };
+    setIsFullScreen((prev) => !prev);
+  }, [isFullScreen]);
+
+  const navLinks = useMemo(() => {
+    return navs.map((page, i) => (
+      <Link
+        key={i}
+        href={`/${coinID}/${page.href}`}
+        onClick={() => handleLinkClick(page.title)}
+        style={{
+          color: activeLink === page.title ? '#FEC167' : 'rgba(255, 255, 255, 0.7)',
+          fontSize: '24px',
+          textDecoration: 'none',
+          fontWeight: activeLink === page.title ? 'normal' : 'lighter',
+        }}
+      >
+        {page.title}
+      </Link>
+    ));
+  }, [activeLink, coinID, handleLinkClick]);
 
   return (
     <Flex direction={'column'} w={'100%'} style={{ padding: '20px 80px', paddingTop: '60px', gap: '20px' }}>
       <Box style={{ width: '100%' }}>
         <DashboardHeaderElements setGraphSelection={setGraphSelection} selectedGraph={selectedGraph} />
+        
         {loading ? (
           <Skeleton height={300} width="100%" radius="md" mt={10} />
-        ) : marketChartData && selectedGraph === 'line' ? (
-          <Box id="chart-container" style={{ position: 'relative' }}>
-            <LineCharts  />
-            <ActionIcon
-              radius={'md'}
-              variant="default"
-              size="md"
-              p={2}
-              style={{ position: 'absolute', top: 20, right: 10, background: 'transparent' }}
-              onClick={toggleFullScreen}
-            >
-              {isFullScreen ? <IconArrowsMinimize stroke={0.5} /> : <IconArrowsMaximize stroke={0.5} />}
-            </ActionIcon>
-          </Box>
-        ) : ohlcData && selectedGraph === 'bar' ? (
-          <Box id="chart-container" style={{ position: 'relative' }}>
-            <CandlestickChart  />
-            <ActionIcon
-              radius={'md'}
-              variant="default"
-              size="md"
-              style={{ position: 'absolute', top: 20, right: 10 }}
-              onClick={toggleFullScreen}
-            >
-              {isFullScreen ? <IconArrowsMinimize /> : <IconArrowsMaximize />}
-            </ActionIcon>
-          </Box>
         ) : (
-          ''
+          <Box id="chart-container" style={{ position: 'relative' }}>
+            {selectedGraph === 'line' && marketChartData ? (
+              <>
+                <LineCharts />
+                <ActionIcon
+                  radius={'md'}
+                  variant="default"
+                  size="md"
+                  style={{ position: 'absolute', top: 20, right: 10 }}
+                  onClick={toggleFullScreen}
+                >
+                  {isFullScreen ? <IconArrowsMinimize stroke={0.5} /> : <IconArrowsMaximize stroke={0.5} />}
+                </ActionIcon>
+              </>
+            ) : selectedGraph === 'bar' && ohlcData ? (
+              <>
+                <CandlestickChart />
+                <ActionIcon
+                  radius={'md'}
+                  variant="default"
+                  size="md"
+                  style={{ position: 'absolute', top: 20, right: 10 }}
+                  onClick={toggleFullScreen}
+                >
+                  {isFullScreen ? <IconArrowsMinimize /> : <IconArrowsMaximize />}
+                </ActionIcon>
+              </>
+            ) : null}
+          </Box>
         )}
       </Box>
 
       {!loading ? (
         <Box style={{ width: '100%' }}>
           <Flex gap={20} direction={'column'}>
-            <Flex gap={10}>
-              {navs?.map((page, i) => (
-                <Link
-                  key={i}
-                  href={`/${coinID}/${page?.href}`}
-                  onClick={() => handleLinkClick(page.title)}
-                  style={{
-                    color: activeLink === page.title ? '#FEC167' : 'rgba(255, 255, 255, 0.7)',
-                    fontSize: '24px',
-                    textDecoration: 'none',
-                    fontWeight: activeLink === page.title ? 'normal' : 'lighter',
-                  }}
-                >
-                  {page?.title}
-                </Link>
-              ))}
-            </Flex>
+            <Flex gap={10}>{navLinks}</Flex>
             {children}
           </Flex>
         </Box>
