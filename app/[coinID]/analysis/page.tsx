@@ -1,4 +1,3 @@
-
 import Analysis from '@/components/analysis/Analysis'
 import React from 'react'
 

@@ -78,10 +78,10 @@ function DashboardElements({ children }: { children: React.ReactNode }) {
                   radius={'md'}
                   variant="default"
                   size="md"
-                  style={{ position: 'absolute', top: 20, right: 10 }}
+                  style={{ position: 'absolute', top: 50, right: 10  , padding:4}}
                   onClick={toggleFullScreen}
                 >
-                  {isFullScreen ? <IconArrowsMinimize stroke={0.5} /> : <IconArrowsMaximize stroke={0.5} />}
+                  {isFullScreen ? <IconArrowsMinimize stroke={0.5}  /> : <IconArrowsMaximize stroke={0.5} />}
                 </ActionIcon>
               </>
             ) : selectedGraph === 'bar' && ohlcData ? (
@@ -90,11 +90,11 @@ function DashboardElements({ children }: { children: React.ReactNode }) {
                 <ActionIcon
                   radius={'md'}
                   variant="default"
-                  size="md"
-                  style={{ position: 'absolute', top: 20, right: 10 }}
+                  size="sm"
+                  style={{ position: 'absolute', top: 50, right: 10, padding:2 }}
                   onClick={toggleFullScreen}
                 >
-                  {isFullScreen ? <IconArrowsMinimize /> : <IconArrowsMaximize />}
+                  {isFullScreen ? <IconArrowsMinimize  stroke={0.5}  /> : <IconArrowsMaximize   stroke={0.5} />}
                 </ActionIcon>
               </>
             ) : null}

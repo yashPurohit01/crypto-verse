@@ -35,6 +35,19 @@ const CandlestickChart: React.FC<CandlestickChartProps> = () => {
         type: 'cross' // This improves readability by showing crosshairs
       },
     },
+    toolbox:{
+     show:true,
+     feature:{
+       dataZoom:{
+          yAxisIndex:'none',
+          
+       },
+       restore:{
+
+       },
+       saveAsImage:{}
+     }
+    },
     xAxis: {
       data: xAxisData, // Use x-axis data from props
       axisLine: { show: true }

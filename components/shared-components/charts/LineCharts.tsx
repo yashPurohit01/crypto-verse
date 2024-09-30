@@ -27,6 +27,17 @@ export default function LineCharts() {
           type: 'cross' // This improves readability by showing crosshairs
         },
       },
+      toolbox:{
+        show:true,
+        feature:{
+          dataZoom:{
+             yAxisIndex:'none',
+          },
+          magicType:{type:['bar','line']},
+          restore:{},
+          saveAsImage:{},
+        }
+       },
     xAxis: {
       type: 'category',
       data:  marketChartData?.prices.map((item: [number, number]) => {

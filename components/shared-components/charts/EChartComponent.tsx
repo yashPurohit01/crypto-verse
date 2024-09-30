@@ -41,7 +41,8 @@ const EChartComponent: React.FC<EChartComponentProps> = ({ option }) => {
       style={{
         width: '100%', // Make it responsive to width
         height: '60vh', // Set height as a percentage of the viewport height
-        minHeight: '400px', // Ensure a minimum height
+        minHeight: '400px',
+        marginTop:'1rem' // Ensure a minimum height
       }}
     />
   );

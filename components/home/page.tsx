@@ -6,11 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 
 export function Home() {
-  const dispatch:AppDispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(fetchCoins());
-}, [dispatch]);
 
   return (
     <></>

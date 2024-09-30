@@ -6,7 +6,7 @@ import { AppDispatch } from '@/Redux/store';
 import { Box, Select, SegmentedControl, Button, Text } from '@mantine/core';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
- // Make sure this path is correct
+ // Make sure this path is correctx
 
 function Settings() {
   const [currency, setCurrency] = useState<string>('USD'); // Default currency
