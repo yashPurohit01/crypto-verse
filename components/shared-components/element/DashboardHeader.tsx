@@ -59,13 +59,16 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
     // Memoize the date options
     const dateItems = useMemo(() => ["1 Day", "3 Day", "1 Week", "1 Month", "6 Month", "1 Year"].map((label) => (
         <Menu.Item
+            style={{
+                fontSize:'12px'
+            }}
             onClick={() => {
                 setSelectedDate(label);
                 setDateOpened(false);
             }}
             key={label}
         >
-            {label}
+          <Text fs={'xs'}> {label}</Text> 
         </Menu.Item>
     )), []);
 

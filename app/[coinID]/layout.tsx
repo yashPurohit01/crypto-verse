@@ -4,13 +4,13 @@ import React, { ReactNode } from 'react';
 
 interface CoinLayoutProps {
     children: ReactNode; // Defines the type of children
-  }
-  
-  const CoinLayout: React.FC<CoinLayoutProps> = ({ children }) => {
+}
+
+const CoinLayout: React.FC<CoinLayoutProps> = ({ children }) => {
     return (
-       <DashboardElements>
-        {children}
-       </DashboardElements>
+        <DashboardElements>
+            {children}
+        </DashboardElements>
     );
 };
 

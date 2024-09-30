@@ -40,7 +40,7 @@ const Statistics = () => {
       <CustomCard
         title="24h Price Change"
         value={`${parseFloat(market_data.price_change_percentage_24h.usd).toFixed(2)}%`}
-        style={{ color: market_data.price_change_percentage_24h.usd < 0 ? 'red' : 'green' }} // Handle color
+       // style={{ color: market_data.price_change_percentage_24h.usd < 0 ? 'red' : 'green' }} // Handle color
       />
       <CustomCard title="All-Time High (USD)" value={`$${parseFloat(market_data.ath.usd).toLocaleString()}`} />
       <CustomCard title="All-Time Low (USD)" value={`$${parseFloat(market_data.atl.usd).toLocaleString()}`} />

@@ -5,13 +5,17 @@ import { fetchMarketChartGraphData, fetchOHLCGraphData } from '../thunks/GraphTh
 interface GraphState {
   ohlcData: any;
   marketChartData: any;
+  graphType:string;
   loading: boolean;
+  defaultDateRange:string;
   error: string | null;
 }
 
 const initialState: GraphState = {
   ohlcData: null,
   marketChartData: null,
+  graphType:'line',
+  defaultDateRange:'7 Days',
   loading: false,
   error: null,
 };
@@ -24,6 +28,12 @@ const graphSlice = createSlice({
       state.ohlcData = null;
       state.marketChartData = null;
       state.error = null;
+    },
+    setGraphType:(state,action) => {
+        state.graphType = action.payload
+    },
+    setDefaultDateRange:(state,action) => {
+      state.defaultDateRange = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -57,6 +67,6 @@ const graphSlice = createSlice({
   },
 });
 
-export const { clearGraphData } = graphSlice.actions;
+export const { clearGraphData,setDefaultDateRange } = graphSlice.actions;
 
 export default graphSlice.reducer;

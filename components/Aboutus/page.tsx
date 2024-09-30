@@ -3,8 +3,8 @@ import { Title, Text, Flex, Box, List } from '@mantine/core';
 
 const AboutUsMain: React.FC = () => {
     return (
-        <Box p="36px" mr={'lg'}  ml={'lg'} style={{ backgroundColor: '#1d2129', borderRadius: '8px'  , padding:'36px', margin:'xl'}}>
-            <Title order={1} style={{ marginBottom: '20px' }}>
+        <Box  mr={'lg'}  ml={'lg'} style={{  borderRadius: '8px'  , padding:'60px', margin:'xl'}}>
+            <Title order={1} style={{ marginBottom: '4rem' }}>
                 About Crypto Verse
             </Title>
             <Text size="md" fw={'lighter'} c={'white'} style={{ marginBottom: '16px' }}>
@@ -33,8 +33,8 @@ const AboutUsMain: React.FC = () => {
             <Text size="sM" fw={'lighter'} c={'white'} style={{ marginBottom: '16px' }}>
                 Thank you for choosing Crypto Verse, where your cryptocurrency journey begins! We invite you to explore, learn, and grow with us as we embark on this exciting adventure together.
             </Text>
-            <Flex justify="center" style={{ marginTop: '20px' }}>
-                <Text size="md" w={700} color="dimmed">
+            <Flex justify="center" style={{ margin: '2rem' }}>
+                <Text size="md" w={700} c="dimmed">
                     Connect with us on social media for the latest updates and community discussions!
                 </Text>
             </Flex>

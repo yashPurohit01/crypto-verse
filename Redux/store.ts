@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import CryptoCoinsSlice from './slice/CryptoCoinsSlice';
 import currencySlice from './slice/currencySlice';
 import GraphSlice from './slice/GraphSlice';
+import cryptoNewsSlice from './slice/cryptoNewsSlice';
 
 const store = configureStore({
     reducer: {
         coins: CryptoCoinsSlice, 
         currency: currencySlice,
-        graph:GraphSlice
+        graph:GraphSlice,
+        news:cryptoNewsSlice,
     },
 });
 

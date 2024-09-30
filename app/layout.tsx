@@ -1,17 +1,11 @@
 import '@mantine/core/styles.css';
-
-import React from 'react';
-import { ColorSchemeScript, Container, Flex, MantineProvider } from '@mantine/core';
+import React, { ReactNode } from 'react';
+import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { theme } from '../theme';
-import HeaderNavigation from '@/components/shared-components/HeaderNavigation/page';
 import StoreProvider from './StoreProvider';
 import './global.css';
-
 import { Poppins } from 'next/font/google';
-import DashboardElements from '@/components/shared-components/element/DashboardElements';
-import Cryptos from '@/components/Cryptos/Cryptos';
-import FloatingCryptos from '@/components/Cryptos/FloatingCryptos';
-
+import MainLayout from '@/components/MainLayout';
 
 // Specify the weights, subsets, and styles you want to use
 const poppins = Poppins({
@@ -21,12 +15,19 @@ const poppins = Poppins({
   display: 'swap',  // Use 'swap' for better loading performance
 });
 
+// Define metadata for the page
 export const metadata = {
   title: 'Mantine Next.js template',
   description: 'I am using Mantine with Next.js!',
 };
 
-export default function RootLayout({ children }: { children: any }) {
+// Define props for RootLayout
+interface MyComponentProps {
+  children: ReactNode; // Use ReactNode for children
+}
+
+// Fix the component definition
+export default function RootLayout({ children }: MyComponentProps) {
   return (
     <html lang="en">
       <head>
@@ -40,21 +41,11 @@ export default function RootLayout({ children }: { children: any }) {
       <body className={poppins.className}>
         <MantineProvider defaultColorScheme="dark" theme={theme}>
           <StoreProvider>
-          <Flex justify="center" p={'lg'} align='flex-start' direction="column" gap="xl">
-            <HeaderNavigation />
-            <FloatingCryptos/>
-            {
-              children
-            }
-            {/* <DashboardElements>
-            {children}
-            </DashboardElements> */}
-            <Cryptos/>
-           
-           </Flex>
+            <MainLayout>
+              {children} {/* Render children here */}
+            </MainLayout>
           </StoreProvider>
         </MantineProvider>
-
       </body>
     </html>
   );

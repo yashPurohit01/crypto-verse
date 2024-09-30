@@ -4,7 +4,6 @@
 import React from 'react';
 import { EChartsOption } from 'echarts';
 import EChartComponent from './EChartComponent';
-import { convertToCandlestickFormat } from '@/utils/conversions';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/Redux/store';
 
@@ -15,8 +14,7 @@ interface CandlestickChartProps {
 
 const CandlestickChart: React.FC<CandlestickChartProps> = () => {
   const {ohlcData} = useSelector((state:RootState) => state?.graph )
-  // const candlestickData = convertToCandlestickFormat(data?.seriesData, 32000);
-  // console.log(data?.seriesData )
+  
   let xAxisData: string[] = [];
       let seriesData: number[][] = [];
 

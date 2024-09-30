@@ -1,10 +1,8 @@
-import Converter from "@/components/converter/Converter";
+import { Home } from "@/components/home/page";
+
 
 export default function HomePage() {
   return (
-    <div>
-          {/* <Converter /> */}
-      
-    </div>
+    <Home/>
   );
 }
