@@ -70,4 +70,23 @@ export const fetchCoinDetails = createAsyncThunk(
     }
   }
 );
+export const fetchCompairatorCoinDetails = createAsyncThunk(
+  'crypto/fetchCompairatorCoinDetails',
+  async (coinId: string, { getState, rejectWithValue }) => {
+    const state = getState() as RootState; // Get the current state
+    const currency = state.currency.globalCurrency || 'usd'; // Default to 'usd' if not set
+
+    try {
+      const response = await fetch(`/api/coins/${coinId}?vs_currency=${currency}`); // Adjust API route if necessary
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json(); // Parse the JSON response
+      return data; // Return the fetched coin details
+    } catch (error: any) {
+      // Handle and return error messages
+      return rejectWithValue(error.message || 'Failed to fetch coin details');
+    }
+  }
+);
 

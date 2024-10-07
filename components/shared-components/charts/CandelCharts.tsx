@@ -7,13 +7,13 @@ import EChartComponent from './EChartComponent';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/Redux/store';
 
-interface CandlestickChartProps {
-
+interface Iprops {
+  ohlcData:any
 }
 
 
-const CandlestickChart: React.FC<CandlestickChartProps> = () => {
-  const {ohlcData} = useSelector((state:RootState) => state?.graph )
+const CandlestickChart = ({ohlcData}:Iprops) => {
+ 
   
   let xAxisData: string[] = [];
       let seriesData: number[][] = [];

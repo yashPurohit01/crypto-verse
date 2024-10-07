@@ -13,6 +13,8 @@ export interface CoinState {
     graphData: any | null;
     selectedCoin:CoinDetail | null;
     loading: boolean;
+    comparisionSelection:string;
+    compairedCoinDetail:null;
     error: string | null | undefined;
 }
 

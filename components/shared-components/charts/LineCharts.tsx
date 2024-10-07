@@ -11,10 +11,14 @@ const EChartComponent = dynamic(() => import('./EChartComponent'), {
   ssr: false, // Disable SSR for this component
 });
 
+interface Iprops {
+  marketChartData:any
+}
 
-export default function LineCharts() {
+
+export default function LineCharts({marketChartData}:Iprops) {
   // Define primary and secondary colors
-  const {marketChartData} = useSelector((state:RootState) => state?.graph )
+
   const PRIMARY_COLOR = '#FEC167';
   const SECONDARY_COLOR = '#FFEACC';
  

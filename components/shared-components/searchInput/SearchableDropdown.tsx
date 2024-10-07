@@ -5,7 +5,11 @@ import { AppDispatch, RootState } from '@/Redux/store';
 import { fetchCoinsList } from '@/Redux/thunks/CryptoThunks';
 import { useRouter } from 'next/navigation';
 
-export function SearchableDropdown() {
+interface Iprops {
+  SelectionHandler: (val: string) => void; // Specify the type of SelectionHandler
+}
+
+export function SearchableDropdown({ SelectionHandler }: Iprops) {
   const { coinList, loading, error } = useSelector((state: RootState) => state.coins);
   const [search, setSearch] = useState('');
   const [value, setValue] = useState<string | null>(null);
@@ -43,10 +47,10 @@ export function SearchableDropdown() {
     <Combobox
       store={combobox}
       withinPortal={false}
-      onOptionSubmit={(val:string) => {
+      onOptionSubmit={(val: string) => {
         setValue(val);
+        SelectionHandler(val); // Call the SelectionHandler with the selected value
         combobox.closeDropdown();
-        router.push(`/${val}/summary`);
       }}
     >
       <Combobox.Target>
@@ -69,11 +73,12 @@ export function SearchableDropdown() {
           placeholder="Search coins"
         />
         <Combobox.Options
-        style={{
-            maxHeight: '250px',  // Set the maximum height for the dropdown
+          style={{
+            maxHeight: '250px', // Set the maximum height for the dropdown
             overflowY: 'auto', 
-            borderRadius:'20px'   // Enable vertical scrolling when content overflows
-          }}>
+            borderRadius: '20px', // Enable vertical scrolling when content overflows
+          }}
+        >
           {loading ? (
             <Combobox.Empty>Loading...</Combobox.Empty>
           ) : filteredOptions.length > 0 ? (
