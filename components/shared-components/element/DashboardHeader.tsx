@@ -1,36 +1,42 @@
 "use client";
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { UnstyledButton, Menu, Image, Group, Title, Text, Flex, Box, Button, Skeleton } from '@mantine/core';
-import { IconChartBar, IconChartLine, IconChevronDown } from '@tabler/icons-react';
+import { IconArrowsExchange2, IconChartBar, IconChartLine, IconChevronDown } from '@tabler/icons-react';
 import classes from '../crypto-options/CryptoOptions.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/Redux/store';
-import { CoinDetail } from '@/Redux/interface';
-import { useParams } from 'next/navigation';
-import { fetchMarketChartGraphData, fetchOHLCGraphData } from '@/Redux/thunks/GraphThunks';
-import { fetchCoins } from '@/Redux/thunks/CryptoThunks';
 import { formatNumberWithCommas } from '@/utils/conversions';
+import { setCompare } from '@/Redux/slice/GraphSlice';
+import { fetchMarketChartGraphData, fetchOHLCGraphData } from '@/Redux/thunks/GraphThunks';
 
 interface IProps {
+    coinID: string;
     setGraphSelection: (graph: string) => void;
-    selectedGraph: string; 
+    selectedGraph: string;
+    selectedDate: string;
+    setSelectedDate: (date: string) => void;
+    loading: boolean;
+    coinDetails: any; // Adjust the type according to your data structure
+    globalCurrency: string;
+    currencySymbol: string;
+    hideCompare?:boolean
 }
 
-export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IProps) {
-    const [dateOpened, setDateOpened] = useState(false);
-    const [selectedDate, setSelectedDate] = useState("1 Year"); // Default selection for date
+export function DashboardHeaderElements({
+    coinID,
+    setGraphSelection,
+    selectedGraph,
+    selectedDate,
+    setSelectedDate,
+    loading,
+    coinDetails,
+    globalCurrency,
+    currencySymbol,
+    hideCompare=false
+}: IProps) {
     const dispatch: AppDispatch = useDispatch();
-    const params = useParams<{ coinID: string }>();
-    const { coinID } = params;
-    const { coinDetails, loading } = useSelector((state: RootState) => state.coins);
-    const {globalCurrency,currencySymbol} = useSelector((state: RootState) => state.currency);
+    const { compare } = useSelector((state: RootState) => state.graph);
 
-    // Fetch coins when the component mounts
-    useEffect(() => {
-        dispatch(fetchCoins());
-    }, [dispatch]);
-
-    // Fetch graph data when the selected coin, graph type, or global currency changes
     useEffect(() => {
         if (coinID) {
             const daysMap: Record<string, string> = {
@@ -41,31 +47,35 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
                 "6 Month": "180",
                 "1 Year": "365",
             };
-            const days = daysMap[selectedDate] || "365";
 
-            const fetchGraphData = selectedGraph === "bar" 
-                ? fetchOHLCGraphData 
-                : fetchMarketChartGraphData;
+            // Get the number of days based on the selected date range
+            const days = daysMap[selectedDate] || "365"; // Default to 365 days if not found
 
+            // Determine which graph data to fetch based on the selected graph type
+            const fetchGraphData = selectedGraph === "bar" ? fetchOHLCGraphData : fetchMarketChartGraphData;
+
+            // Dispatch the action to fetch the graph data
             dispatch(fetchGraphData({ coinId: coinID, currency: globalCurrency, days }));
         }
     }, [dispatch, globalCurrency, selectedDate, selectedGraph, coinID]);
 
-    const dateItems = useMemo(() => ["1 Day", "3 Day", "1 Week", "1 Month", "6 Month", "1 Year"].map(label => (
-        <Menu.Item
-            style={{ fontSize: '12px' }}
-            onClick={() => {
-                setSelectedDate(label);
-                setDateOpened(false);
-            }}
-            key={label}
-        >
-            <Text fs={'xs'}>{label}</Text>
-        </Menu.Item>
-    )), []);
+
+    const dateItems = useMemo(() => {
+        const dates = ["1 Day", "3 Day", "1 Week", "1 Month", "6 Month", "1 Year"];
+        return dates.map(label => (
+            <Menu.Item
+                style={{ fontSize: '12px' }}
+                onClick={() => setSelectedDate(label)}
+                key={label}
+            >
+                <Text fs={'xs'}>{label}</Text>
+            </Menu.Item>
+        ));
+    }, [setSelectedDate]);
 
     const percentageChange = parseFloat(coinDetails?.market_data?.price_change_percentage_24h_in_currency[globalCurrency]) ?? 0;
-    const color = percentageChange >= 0 ? 'green' : 'red';
+    const priceChange = parseFloat(coinDetails?.market_data?.price_change_24h_in_currency[globalCurrency]) ?? 0;
+    const color = (percentageChange >= 0 && priceChange >= 0) ? 'green' : 'red';
 
     const buttonStyles = useMemo(() => ({
         padding: 6,
@@ -78,7 +88,7 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
 
     return (
         <Box style={{ width: "100%" }}>
-            {!loading ?
+            {!loading ? (
                 <Flex align="flex-end" justify="space-between">
                     <Group gap="xs">
                         <Image src={coinDetails?.image.small} width={32} height={32} style={{ borderRadius: '8px' }} />
@@ -95,8 +105,19 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
                         <Button variant="outline" style={buttonStyles} onClick={() => setGraphSelection("line")}>
                             <IconChartLine stroke={0.8} opacity={0.8} />
                         </Button>
+
+                        {
+                            !hideCompare &&
+                            <Button variant="outline" style={buttonStyles} onClick={() => dispatch(setCompare(!compare))}>
+                                <Text size='xs' opacity={'.6'} mr={4}>compare</Text>
+                                <IconArrowsExchange2 stroke={0.8} opacity={0.8} />
+                            </Button>
+                        }
+
+
                     </Flex>
-                </Flex> :
+                </Flex>
+            ) : (
                 <Flex align="flex-end" justify="space-between">
                     <Group>
                         <Skeleton height={50} width="100px" radius="md" />
@@ -105,30 +126,24 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
                         <Skeleton height={60} width="200px" radius="md" />
                     </Group>
                 </Flex>
-            }
-            {!loading ?
+            )}
+            {!loading ? (
                 <Flex align="flex-end" justify="space-between">
                     <Box>
                         <Flex align="flex-end">
                             <Title style={{ fontSize: '48px', fontWeight: 'lighter', marginLeft: '4px' }} className={classes.price}>
-                             {currencySymbol}   {formatNumberWithCommas(parseFloat(coinDetails?.market_data?.current_price[globalCurrency]).toFixed(3))}
+                                {currencySymbol} {formatNumberWithCommas(parseFloat(coinDetails?.market_data?.current_price[globalCurrency]).toFixed(3))}
                             </Title>
                             <Text style={{ color, marginBottom: '8px', marginLeft: '4px', fontSize: '10px' }}>
-                                ({Math.abs(percentageChange).toFixed(2)})%
+                                {Math.abs(priceChange).toFixed(2)} ({Math.abs(percentageChange).toFixed(2)})%
                             </Text>
                         </Flex>
                     </Box>
 
                     <Box>
-                        <Menu
-                            onOpen={() => setDateOpened(true)}
-                            onClose={() => setDateOpened(false)}
-                            radius="md"
-                            width="target"
-                            withinPortal
-                        >
+                        <Menu radius="md" width="target" withinPortal>
                             <Menu.Target>
-                                <UnstyledButton data-expanded={dateOpened || undefined}>
+                                <UnstyledButton>
                                     <Group style={{ border: '1px solid #ffffff30', borderRadius: '8px', padding: '8px' }} gap="xs">
                                         <Text style={{ fontWeight: 'lighter', fontSize: '10px', color: 'var(--mantine-color-secondary-1)' }}>
                                             {selectedDate}
@@ -140,9 +155,10 @@ export function DashboardHeaderElements({ setGraphSelection, selectedGraph }: IP
                             <Menu.Dropdown>{dateItems}</Menu.Dropdown>
                         </Menu>
                     </Box>
-                </Flex> :
+                </Flex>
+            ) : (
                 <Skeleton height={100} width="300px" radius="md" mt={10} />
-            }
+            )}
         </Box>
     );
 }

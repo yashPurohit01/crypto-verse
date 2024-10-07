@@ -11,16 +11,17 @@ import { useParams } from 'next/navigation';
 import { DashboardHeaderElements } from './DashboardHeader';
 import { IconArrowsMaximize, IconArrowsMinimize } from '@tabler/icons-react';
 import { navs } from './options';
+import CompairatorElement from './CompairatorElement';
 
 function DashboardElements({ children }: { children: React.ReactNode }) {
-  const [selectedGraph, setGraphSelection] = useState<string>('bar');
+
   const [activeLink, setActiveLink] = useState<string>('');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const params = useParams<{ coinID: string }>();
   const dispatch:AppDispatch = useDispatch();
   const { coinID } = params;
 
-  const { marketChartData, ohlcData, loading } = useSelector((state: RootState) => state.graph);
+  const { marketChartData, ohlcData,  compare} = useSelector((state: RootState) => state.graph);
 
   useEffect(() => {
     if (coinID) {
@@ -62,10 +63,29 @@ function DashboardElements({ children }: { children: React.ReactNode }) {
     ));
   }, [activeLink, coinID, handleLinkClick]);
 
+  const { coinDetails, loading } = useSelector((state: RootState) => state.coins);
+  const { globalCurrency, currencySymbol } = useSelector((state: RootState) => state.currency);
+
+  const [selectedGraph, setSelectedGraph] = useState("line");
+  const [selectedDate, setSelectedDate] = useState("1 Year");
+
   return (
+    <Flex>
+    
     <Flex direction={'column'} w={'100%'} style={{ padding: '20px 80px', paddingTop: '60px', gap: '20px' }}>
+      
       <Box style={{ width: '100%' }}>
-        <DashboardHeaderElements setGraphSelection={setGraphSelection} selectedGraph={selectedGraph} />
+        <DashboardHeaderElements 
+        coinID={coinID}
+        setGraphSelection={setSelectedGraph}
+        selectedGraph={selectedGraph}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        loading={loading}
+        coinDetails={coinDetails}
+        globalCurrency={globalCurrency}
+        currencySymbol={currencySymbol}
+     />
         
         {loading ? (
           <Skeleton height={300} width="100%" radius="md" mt={10} />
@@ -73,7 +93,7 @@ function DashboardElements({ children }: { children: React.ReactNode }) {
           <Box id="chart-container" style={{ position: 'relative' }}>
             {selectedGraph === 'line' && marketChartData ? (
               <>
-                <LineCharts />
+                <LineCharts marketChartData={marketChartData} />
                 <ActionIcon
                   radius={'md'}
                   variant="default"
@@ -86,7 +106,7 @@ function DashboardElements({ children }: { children: React.ReactNode }) {
               </>
             ) : selectedGraph === 'bar' && ohlcData ? (
               <>
-                <CandlestickChart />
+                <CandlestickChart ohlcData={ohlcData} />
                 <ActionIcon
                   radius={'md'}
                   variant="default"
@@ -98,9 +118,12 @@ function DashboardElements({ children }: { children: React.ReactNode }) {
                 </ActionIcon>
               </>
             ) : null}
+           
           </Box>
         )}
       </Box>
+      
+      
 
       {!loading ? (
         <Box style={{ width: '100%' }}>
@@ -112,6 +135,14 @@ function DashboardElements({ children }: { children: React.ReactNode }) {
       ) : (
         <Skeleton height={400} width="100%" radius="md" mt={20} />
       )}
+    </Flex>
+    {
+       compare &&
+       <CompairatorElement children={children}/>
+      
+      
+    }
+     
     </Flex>
   );
 }

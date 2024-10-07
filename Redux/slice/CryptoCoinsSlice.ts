@@ -1,17 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CoinState } from "../interface";
-import { fetchCoins, fetchCoinDetails, fetchCoinsList } from "../thunks/CryptoThunks";
+import { fetchCoins, fetchCoinDetails, fetchCoinsList, fetchCompairatorCoinDetails } from "../thunks/CryptoThunks";
 
 // Initial state
 const initialState: CoinState = {
   coins: [],
   nfts: [],
   categories: [],
-  coinList:[],
+  coinList: [],
   selectedCoin: null,
   coinDetails: null,
   graphData: null,
   loading: false,
+  comparisionSelection:"",
+  compairedCoinDetail: null,  // For storing the compared coin details
   error: null,
 };
 
@@ -30,7 +32,10 @@ const CryptoCoinsSlice = createSlice({
     },
     clearGraphDetail(state) {
       state.graphData = null;
-    }
+    },
+    setCompareCoin(state, action) {
+      state.comparisionSelection = action?.payload;
+    },
   },
   extraReducers: (builder) => {
     // Fetching list of coins, NFTs, and categories
@@ -64,8 +69,9 @@ const CryptoCoinsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch coin details';
       });
-      
-      builder
+
+    // Fetching list of coins for search input
+    builder
       .addCase(fetchCoinsList.pending, (state) => {
         state.loading = true;
         state.error = null; // Reset error
@@ -78,9 +84,24 @@ const CryptoCoinsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message; // Set error message
       });
+
+    // Fetching compared coin details
+    builder
+      .addCase(fetchCompairatorCoinDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCompairatorCoinDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.compairedCoinDetail = action.payload; // Set compared coin details
+      })
+      .addCase(fetchCompairatorCoinDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
 // Export actions and reducer
-export const { selectCoin, clearCoinDetails , clearGraphDetail } = CryptoCoinsSlice.actions;
+export const { selectCoin, clearCoinDetails, clearGraphDetail, setCompareCoin } = CryptoCoinsSlice.actions;
 export default CryptoCoinsSlice.reducer;

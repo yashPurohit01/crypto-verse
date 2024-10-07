@@ -3,7 +3,7 @@
 import { ActionIcon, Box, Flex, Group } from '@mantine/core';
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { IconSettings } from '@tabler/icons-react';
 import { SearchableDropdown } from '../searchInput/SearchableDropdown';
 import Logo from '../logo';
@@ -29,6 +29,12 @@ const navigationLinks = [
 
 function HeaderNavigation() {
   const pathname = usePathname(); // Get the current pathname
+  const router = useRouter();
+
+  // SelectionHandler that handles navigation to the selected value
+  const SelectionHandler = (val:any) => {
+    router.push(`/${val}/summary`);
+  };
 
   return (
     <Flex justify="space-between" align="center" w="100%" p="lg">
@@ -45,7 +51,8 @@ function HeaderNavigation() {
       </Group>
 
       <Box w="300px">
-        <SearchableDropdown />
+        {/* Pass the SelectionHandler as a prop */}
+        <SearchableDropdown SelectionHandler={SelectionHandler} />
       </Box>
 
       <Link href="/settings">
